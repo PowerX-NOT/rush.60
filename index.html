@@ -5,12 +5,29 @@
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>60-Minute Delivery | Construction Materials</title>
+    <script>
+      // Check if a redirect is stored in sessionStorage
+      (function() {
+        var redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        if (redirect && redirect != location.href) {
+          // Extract the path from the full URL
+          var url = new URL(redirect);
+          var path = url.pathname.substring(1); // Remove leading slash
+          
+          // Redirect to the hash-based route
+          if (path) {
+            history.replaceState(null, null, location.pathname + '#/' + path);
+          }
+        }
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
   </head>
   <body class="bg-light-sand font-inter text-gray-800">
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>
