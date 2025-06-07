@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
 // Layout
@@ -41,6 +41,8 @@ const App = () => {
                   <Route path="/checkout" element={<CheckoutPage />} />
                   <Route path="/track" element={<TrackOrderPage />} />
                   <Route path="/contact" element={<ContactPage />} />
+                  {/* Redirect any unmatched routes to HomePage */}
+                  <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
               </main>
               <Footer />
