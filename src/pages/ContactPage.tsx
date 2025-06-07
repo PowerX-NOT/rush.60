@@ -8,12 +8,15 @@ import {
   Send,
   MessageCircle,
   Truck,
-  HeadphonesIcon
+  HeadphonesIcon,
+  CheckCircle
 } from 'lucide-react';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 import { fadeIn, slideUp } from '../utils/animations';
 import ChatWidget from '../components/chat/ChatWidget';
+import toast from 'react-hot-toast';
+import { sendContactMessage } from '../services/telegramService';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -24,15 +27,57 @@ const ContactPage = () => {
     message: ''
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', formData);
+    setIsSubmitting(true);
+
+    try {
+      // Send message to Telegram
+      const success = await sendContactMessage(formData);
+      
+      if (success) {
+        // Show success message
+        toast.success('Message sent successfully! We\'ll get back to you within 24 hours.', {
+          duration: 4000,
+          position: 'top-right',
+        });
+
+        // Reset form and show success state
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: ''
+        });
+        
+        setIsSubmitted(true);
+        
+        // Reset success state after 5 seconds
+        setTimeout(() => {
+          setIsSubmitted(false);
+        }, 5000);
+      } else {
+        throw new Error('Failed to send message');
+      }
+
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error('Failed to send message. Please try again or contact us directly.', {
+        duration: 4000,
+        position: 'top-right',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -149,75 +194,103 @@ const ContactPage = () => {
             transition={{ delay: 0.2 }}
           >
             <div className="bg-white rounded-2xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold font-poppins mb-6">Send us a Message</h2>
-              
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Input
-                    label="Full Name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Enter your full name"
-                    required
-                  />
-                  
-                  <Input
-                    label="Email Address"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="Enter your email"
-                    required
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Input
-                    label="Phone Number"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="Enter your phone number"
-                    required
-                  />
-                  
-                  <Input
-                    label="Subject"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    placeholder="What is this about?"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-gray-700 font-medium mb-1 text-sm">
-                    Message
-                  </label>
-                  <textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    placeholder="Tell us how we can help you..."
-                    rows={6}
-                    className="w-full rounded-md border border-gray-300 bg-white py-3 px-4 text-gray-700 focus:border-terracotta focus:outline-none focus:ring-1 focus:ring-terracotta/50"
-                    required
-                  />
-                </div>
-
-                <Button 
-                  type="submit" 
-                  variant="primary" 
-                  size="lg" 
-                  icon={<Send size={18} />}
-                  className="w-full md:w-auto"
+              {isSubmitted ? (
+                <motion.div
+                  className="text-center py-8"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
                 >
-                  Send Message
-                </Button>
-              </form>
+                  <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle size={32} className="text-success" />
+                  </div>
+                  <h3 className="text-2xl font-bold font-poppins mb-2 text-success">
+                    Message Sent Successfully!
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    Thank you for contacting us. We'll get back to you within 24 hours.
+                  </p>
+                  <Button 
+                    variant="primary"
+                    onClick={() => setIsSubmitted(false)}
+                  >
+                    Send Another Message
+                  </Button>
+                </motion.div>
+              ) : (
+                <>
+                  <h2 className="text-2xl font-bold font-poppins mb-6">Send us a Message</h2>
+                  
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <Input
+                        label="Full Name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="Enter your full name"
+                        required
+                      />
+                      
+                      <Input
+                        label="Email Address"
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="Enter your email"
+                        required
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <Input
+                        label="Phone Number"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        placeholder="Enter your phone number"
+                        required
+                      />
+                      
+                      <Input
+                        label="Subject"
+                        name="subject"
+                        value={formData.subject}
+                        onChange={handleChange}
+                        placeholder="What is this about?"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-1 text-sm">
+                        Message
+                      </label>
+                      <textarea
+                        name="message"
+                        value={formData.message}
+                        onChange={handleChange}
+                        placeholder="Tell us how we can help you..."
+                        rows={6}
+                        className="w-full rounded-md border border-gray-300 bg-white py-3 px-4 text-gray-700 focus:border-terracotta focus:outline-none focus:ring-1 focus:ring-terracotta/50"
+                        required
+                      />
+                    </div>
+
+                    <Button 
+                      type="submit" 
+                      variant="primary" 
+                      size="lg" 
+                      icon={isSubmitting ? undefined : <Send size={18} />}
+                      className="w-full md:w-auto"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? 'Sending...' : 'Send Message'}
+                    </Button>
+                  </form>
+                </>
+              )}
             </div>
           </motion.div>
         </div>
