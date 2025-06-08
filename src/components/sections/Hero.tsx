@@ -155,7 +155,7 @@ const Hero = () => {
             {/* Main hero image */}
             <div className="relative">
               <img 
-                src="https://images.pexels.com/photos/4219101/pexels-photo-4219101.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
+                src="https://mccoymart.com/post/wp-content/uploads/07-May-24-Building-Materials.jpg" 
                 alt="Construction materials" 
                 className="rounded-2xl shadow-2xl object-cover h-[500px] w-full"
               />
