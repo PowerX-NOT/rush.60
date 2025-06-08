@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { 
   Phone, 
   Mail, 
@@ -19,6 +20,7 @@ import toast from 'react-hot-toast';
 import { sendContactMessage } from '../services/telegramService';
 
 const ContactPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -169,6 +171,7 @@ const ContactPage = () => {
                     size="sm" 
                     fullWidth
                     icon={<Truck size={16} />}
+                    onClick={() => navigate('/track')}
                   >
                     Track Your Order
                   </Button>

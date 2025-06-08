@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { 
   Search, 
   Truck, 
@@ -15,6 +16,7 @@ import { fadeIn, slideUp } from '../utils/animations';
 import ChatWidget from '../components/chat/ChatWidget';
 
 const TrackOrderPage = () => {
+  const navigate = useNavigate();
   const [orderId, setOrderId] = useState('');
   const [isTracking, setIsTracking] = useState(false);
   const [orderStatus, setOrderStatus] = useState<'pending' | 'confirmed' | 'out_for_delivery' | 'delivered'>('confirmed');
@@ -89,6 +91,7 @@ const TrackOrderPage = () => {
                     variant="outline" 
                     size="md"
                     icon={<PhoneCall size={16} />}
+                    onClick={() => navigate('/contact')}
                   >
                     Contact Support
                   </Button>
@@ -184,6 +187,7 @@ const TrackOrderPage = () => {
                       variant="outline" 
                       size="sm"
                       icon={<PhoneCall size={16} />}
+                      onClick={() => navigate('/contact')}
                     >
                       Contact Support
                     </Button>
