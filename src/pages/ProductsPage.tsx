@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Filter, Search as SearchIcon } from 'lucide-react';
 import ProductCard from '../components/ui/ProductCard';
@@ -11,16 +11,21 @@ import ChatWidget from '../components/chat/ChatWidget';
 
 const ProductsPage = () => {
   const { categoryId } = useParams<{ categoryId?: string }>();
+  const [searchParams] = useSearchParams();
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   
   useEffect(() => {
-    if (categoryId) {
+    const query = searchParams.get('q');
+    if (query) {
+      setSearchQuery(query);
+      handleSearch(query);
+    } else if (categoryId) {
       setFilteredProducts(getProductsByCategory(categoryId));
     } else {
       setFilteredProducts(products);
     }
-  }, [categoryId]);
+  }, [categoryId, searchParams]);
   
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -47,6 +52,7 @@ const ProductsPage = () => {
   };
   
   const getCategoryName = () => {
+    if (searchQuery) return `Search Results for "${searchQuery}"`;
     if (!categoryId) return 'All Products';
     const category = categories.find(cat => cat.id === categoryId);
     return category ? category.name : 'Products';
@@ -64,6 +70,7 @@ const ProductsPage = () => {
             <SearchBar 
               onSearch={handleSearch} 
               placeholder="Search for products..." 
+              value={searchQuery}
             />
             
             <div className="flex items-center">

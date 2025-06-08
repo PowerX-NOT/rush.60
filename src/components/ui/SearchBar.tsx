@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -8,17 +8,25 @@ interface SearchBarProps {
   fullWidth?: boolean;
   className?: string;
   onSearch?: (query: string) => void;
+  value?: string;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
   placeholder = 'Search for construction materials...',
   fullWidth = false,
   className = '',
-  onSearch
+  onSearch,
+  value: externalValue
 }) => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(externalValue || '');
   const [isFocused, setIsFocused] = useState(false);
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (externalValue !== undefined) {
+      setQuery(externalValue);
+    }
+  }, [externalValue]);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +34,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       if (onSearch) {
         onSearch(query);
       } else {
-        navigate(`/search?q=${encodeURIComponent(query)}`);
+        navigate(`/products?q=${encodeURIComponent(query)}`);
       }
     }
   };
