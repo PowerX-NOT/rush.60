@@ -17,7 +17,7 @@ const ProductsPage = () => {
   
   useEffect(() => {
     const query = searchParams.get('q');
-    if (query) {
+    if (query !== null) {
       setSearchQuery(query);
       handleSearch(query);
     } else if (categoryId) {
