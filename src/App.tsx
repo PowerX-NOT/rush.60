@@ -15,6 +15,7 @@ import CheckoutPage from './pages/CheckoutPage';
 import TrackOrderPage from './pages/TrackOrderPage';
 import ContactPage from './pages/ContactPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import OrderConfirmationPage from './pages/OrderConfirmationPage';
 
 const App = () => {
   return (
@@ -39,6 +40,7 @@ const App = () => {
                   <Route path="/product/:productId" element={<ProductDetailPage />} />
                   <Route path="/cart" element={<CartPage />} />
                   <Route path="/checkout" element={<CheckoutPage />} />
+                  <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
                   <Route path="/track" element={<TrackOrderPage />} />
                   <Route path="/contact" element={<ContactPage />} />
                   {/* Redirect any unmatched routes to HomePage */}

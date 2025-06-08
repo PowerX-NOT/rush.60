@@ -1,52 +1,31 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { CreditCard } from 'lucide-react';
-import Button from '../ui/Button';
-import { fadeIn } from '../../utils/animations';
+import { Banknote } from 'lucide-react';
+import { slideUp } from '../../utils/animations';
 
 interface PaymentOptionsProps {
-  onSubmit: (paymentMethod: 'cod') => void;
+  onSubmit: () => void;
+  isProcessing?: boolean;
 }
 
-const PaymentOptions: React.FC<PaymentOptionsProps> = ({ onSubmit }) => {
-  const [paymentMethod, setPaymentMethod] = useState<'cod'>('cod');
-  
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(paymentMethod);
-  };
-  
+const PaymentOptions: React.FC<PaymentOptionsProps> = ({ onSubmit, isProcessing = false }) => {
   return (
-    <motion.form
-      onSubmit={handleSubmit}
-      className="bg-white rounded-lg shadow-elevation-1 p-6"
+    <motion.div
       initial="hidden"
       animate="visible"
-      variants={fadeIn}
+      variants={slideUp}
+      className="bg-white rounded-lg shadow-md p-6"
     >
-      <h3 className="text-xl font-semibold mb-4 font-poppins">Payment Method</h3>
+      <h2 className="text-2xl font-bold font-poppins mb-6">Payment Method</h2>
       
-      <div className="space-y-3">
-        <div className="border border-gray-200 rounded-lg p-4 cursor-pointer bg-sand/30">
+      <div className="space-y-4">
+        <div className="border rounded-lg p-4 bg-sand/30">
           <div className="flex items-center">
-            <input
-              type="radio"
-              id="cod"
-              name="paymentMethod"
-              value="cod"
-              checked={paymentMethod === 'cod'}
-              onChange={() => setPaymentMethod('cod')}
-              className="mr-3 h-4 w-4 text-terracotta focus:ring-terracotta/50"
-            />
-            <label htmlFor="cod" className="flex-grow cursor-pointer">
-              <div className="flex items-center">
-                <CreditCard size={20} className="mr-2 text-terracotta" />
-                <span className="font-medium">Cash on Delivery</span>
-              </div>
-              <p className="text-sm text-gray-600 mt-1 ml-7">
-                Pay with cash when your order is delivered
-              </p>
-            </label>
+            <Banknote className="w-6 h-6 mr-3 text-terracotta" />
+            <div className="text-left">
+              <h3 className="font-semibold">Cash on Delivery</h3>
+              <p className="text-sm text-gray-600">Pay when you receive your order</p>
+            </div>
           </div>
         </div>
       </div>
@@ -54,23 +33,25 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({ onSubmit }) => {
       <div className="mt-6 text-sm bg-sand/50 p-4 rounded-lg">
         <p className="mb-2 font-medium">Important Note:</p>
         <ul className="list-disc list-inside space-y-1 text-gray-700">
-          <li>Cash on Delivery is the only payment option available</li>
           <li>Please keep the exact amount ready for a smoother delivery experience</li>
           <li>Our delivery person will provide a receipt upon payment</li>
         </ul>
       </div>
       
-      <Button 
-        type="submit" 
-        variant="primary" 
-        size="lg" 
-        fullWidth 
-        className="mt-6"
-        icon={<CreditCard size={18} />}
-      >
-        Place Order
-      </Button>
-    </motion.form>
+      <div className="mt-8">
+        <button
+          onClick={onSubmit}
+          disabled={isProcessing}
+          className={`w-full py-3 px-6 rounded-lg text-white font-semibold transition-colors ${
+            isProcessing 
+              ? 'bg-gray-400 cursor-not-allowed' 
+              : 'bg-terracotta hover:bg-terracotta-dark'
+          }`}
+        >
+          {isProcessing ? 'Processing...' : 'Place Order'}
+        </button>
+      </div>
+    </motion.div>
   );
 };
 
